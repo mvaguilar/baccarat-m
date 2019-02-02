@@ -13,6 +13,14 @@ export class Round {
         this.playerPair = playerPair;
         this.bankerPair = bankerPair;
     }
+
+    updatePlayerPair() {
+        this.playerPair = true;
+    }
+
+    updateBankerPair() {
+        this.bankerPair = true;
+    }
 }
 
 export default Round;

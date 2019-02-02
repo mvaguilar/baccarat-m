@@ -4,43 +4,95 @@ import TheShoe from "./TheShoe";
 import './Hello.css';
 import Round from './Round';
 import GameHistory from './GameHistory';
+import Player from './Player';
 
 export interface IProps {
     name: string;
     enthusiasmLevel?: number;
 }
 
+interface IState {
+    value:string;
+}
+
 var theShoe: Card[] = [];
 var gameHistory: GameHistory;
+var playerStat: Player;
 
-class Table extends React.Component<IProps> {
+class Table extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         gameHistory = new GameHistory();
+        playerStat = new Player();
         this.createTheShoe();
+        this.state = { value: '5' };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.forceUpdateHandler = this.forceUpdateHandler.bind(this);
     }
+
+    forceUpdateHandler(){
+        this.forceUpdate();
+      };
+      
     public onNewCards = () => this.createTheShoe();
     public onShuffleCards = () => this.shuffleCurrentCards();
     public onDeal = () => this.dealCards();
     public showGameHistory = () => this.gameHistory();
+    public putPlayerBet = () => this.playerBet();
+    public putBankerBet = () => this.bankerBet();
+    public putTieBet = () => this.tieBet();
+    public putPlayerPairBet = () => this.playerPairBet();
+    public putBankerPairBet = () => this.bankerPairBet();
+    public onClearBets = () => this.clearBets();
 
-    public render() {
-        return (
-            <div className="hello">
-                <div className="greeting">
-                    Lets Play Baccarat!
-                </div>
-                <button onClick={this.onNewCards}>Get New Cards</button>
-                <button onClick={this.onShuffleCards}>Shuffle Cards</button>
-                <button onClick={this.onDeal}>Deal!</button>
-                <button onClick={this.showGameHistory}>Game History!</button>
-            </div>
-        );
+    public playerBet() {
+        console.log('You Bet: 100 on Player');
+        if(!playerStat.putBets(100,0,0,0,0)) {
+            console.log('Insufficient Funds');
+            window.confirm('Insufficient Funds!')
+        }
+    }
+
+    public bankerBet() {
+        console.log('You Bet: 100 on Banker');
+        if(!playerStat.putBets(0,100,0,0,0)) {
+            console.log('Insufficient Funds');
+            window.confirm('Insufficient Funds!')
+        }
+    }
+
+    public tieBet() {
+        console.log('You Bet: 100 on Tie');
+        if(!playerStat.putBets(0,0,100,0,0)) {
+            console.log('Insufficient Funds');
+            window.confirm('Insufficient Funds!')
+        }
+    }
+
+    public playerPairBet() {
+        console.log('You Bet: 100 on Player Pair');
+        if(!playerStat.putBets(0,0,0,100,0)) {
+            console.log('Insufficient Funds');
+            window.confirm('Insufficient Funds!')
+        }
+    }
+
+    public bankerPairBet() {
+        console.log('You Bet: 100 on Banker Pair');
+        if(!playerStat.putBets(0,0,0,0,100)) {
+            console.log('Insufficient Funds');
+            window.confirm('Insufficient Funds!')
+        }
     }
 
     public createTheShoe() {
         // theShoe = createShoe();
         theShoe = shuffle(new TheShoe().create());
+        playerStat.resetPlayer();
+        this.setState({value: String(playerStat.chips)});
     }
 
     public shuffleCurrentCards() {
@@ -49,11 +101,51 @@ class Table extends React.Component<IProps> {
 
     public dealCards() {
         deal(theShoe);
+        this.setState({value: String(playerStat.chips)});
+    }
+
+    public clearBets() {
+        console.log(playerStat);
+        playerStat.clearBets();
+        console.log(playerStat);
     }
 
     public gameHistory() {
         if (gameHistory != undefined)
-        console.log(gameHistory);
+            console.log(gameHistory);
+    }
+
+    handleChange(event: any) {
+        this.setState({ value: event.target.value });
+    }
+
+    handleSubmit(event: any) {
+        event.preventDefault();
+    }
+
+    public render() {
+        return (
+            <div className="hello">
+                <div className="greeting">
+                    Lets Play Baccarat!
+                </div>
+                <label>
+                    <input id="currentFunds" value={playerStat.chips} readOnly/>
+                </label>
+                <button onClick={this.onNewCards}>Restart Game</button>
+                <button onClick={this.onShuffleCards}>Shuffle Cards</button>
+                <button onClick={this.onDeal}>Deal!</button>
+                <button onClick={this.onClearBets}>Clear Bets</button>
+                <div>
+                    <button onClick={this.putPlayerBet}>Bet 100 on Player</button>
+                    <button onClick={this.putBankerBet}>Bet 100 on Banker</button>
+                    <button onClick={this.putTieBet}>Bet 100 on Tie</button>
+                    <button onClick={this.putPlayerPairBet}>Bet 100 on Player Pair</button>
+                    <button onClick={this.putBankerPairBet}>Bet 100 on Banker Pair</button>
+                </div>
+                <button onClick={this.showGameHistory}>Game History</button>
+            </div>
+        );
     }
 }
 
@@ -119,7 +211,7 @@ function totalTheHands(playerHand: Card[], bankerHand: Card[]) {
     } else {
         drawThirdCards(playerHand, bankerHand);
     }
-    gameResult();
+    gameResult(playerHand, bankerHand);
 }
 
 function drawThirdCards(playerHand: Card[], bankerHand: Card[]) {
@@ -172,18 +264,28 @@ function drawThirdCards(playerHand: Card[], bankerHand: Card[]) {
     //End Debug
 }
 
-function gameResult() {
-    var endRound:Round;
+function gameResult(playerHand: Card[], bankerHand: Card[]) {
+    var endRound: Round;
     if (playerHandTotalValue > bankerHandTotalValue) {
         console.log("Player Wins!");
-        endRound = new Round(true,false,false,false,false);
+        endRound = new Round(true, false, false, false, false);
     } else if (playerHandTotalValue < bankerHandTotalValue) {
         console.log("Banker Wins!");
-        endRound = new Round(false,true,false,false,false);
+        endRound = new Round(false, true, false, false, false);
     } else if (playerHandTotalValue === bankerHandTotalValue) {
         console.log("It is a TIE. The bank and player both have", bankerHandTotalValue);
-        endRound = new Round(false,false,true,false,false);
+        endRound = new Round(false, false, true, false, false);
     }
+
+    if (playerHand[0].value == playerHand[1].value) {
+        endRound!.updatePlayerPair();
+    }
+
+    if (playerHand[0].value == playerHand[1].value) {
+        endRound!.updateBankerPair();
+    }
+
+    playerStat.updateChips(endRound!);
     gameHistory.addToRecord(endRound!);
     // bonusHands();
 }
