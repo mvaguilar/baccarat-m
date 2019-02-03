@@ -1,7 +1,7 @@
 import * as React from "react";
 import Card from "./Card";
 import TheShoe from "./TheShoe";
-import './Hello.css';
+import './Table.css';
 import Round from './Round';
 import GameHistory from './GameHistory';
 import GameHistoryPopup from './GameHistoryPopup';
@@ -9,86 +9,141 @@ import Player from './Player';
 
 export interface IProps {
     name: string;
-    enthusiasmLevel?: number;
 }
 
 interface IState {
-    value:string;
+    value: string;
     showPopup: boolean;
+    playerBetValue: number;
+    bankerBetValue: number;
+    tieBetValue: number;
+    playerPairBetValue: number;
+    bankerPairBetValue: number;
+    roundResultValue: string;
 }
 
 var theShoe: Card[] = [];
 var gameHistoryValue: GameHistory;
 var playerStat: Player;
 var roundName: number;
-  
+var playerBet: number;
+var bankerBet: number;
+var tieBet: number;
+var playerPairBet: number;
+var bankerPairBet: number;
+var roundResult: string;
+
 class Table extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         roundName = 0;
+        playerBet = 0;
+        bankerBet = 0;
+        tieBet = 0;
+        playerPairBet = 0;
+        bankerPairBet = 0;
+        roundResult = '';
         gameHistoryValue = new GameHistory();
         playerStat = new Player();
         this.createTheShoe();
-        this.state = { value: '0', showPopup: false };
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-
-        this.forceUpdateHandler = this.forceUpdateHandler.bind(this);
+        this.state = {
+            value: '0',
+            showPopup: false,
+            playerBetValue: 0,
+            bankerBetValue: 0,
+            tieBetValue: 0,
+            playerPairBetValue: 0,
+            bankerPairBetValue: 0,
+            roundResultValue: ''
+        };
     }
 
-    forceUpdateHandler(){
-        this.forceUpdate();
-      };
-      
-    public onNewCards = () => this.createTheShoe();
+
+    public onNewCards = () => this.restartGame();
     public onShuffleCards = () => this.shuffleCurrentCards();
     public onDeal = () => this.dealCards();
     public showGameHistory = () => this.gameHistory();
-    public putPlayerBet = () => this.playerBet();
-    public putBankerBet = () => this.bankerBet();
-    public putTieBet = () => this.tieBet();
-    public putPlayerPairBet = () => this.playerPairBet();
-    public putBankerPairBet = () => this.bankerPairBet();
+
+    // Coins and Bets
+    public putPlayerBet5 = () => this.playerBet(5);
+    public putBankerBet5 = () => this.bankerBet(5);
+    public putTieBet5 = () => this.tieBet(5);
+    public putPlayerPairBet5 = () => this.playerPairBet(5);
+    public putBankerPairBet5 = () => this.bankerPairBet(5);
+
+    public putPlayerBet25 = () => this.playerBet(25);
+    public putBankerBet25 = () => this.bankerBet(25);
+    public putTieBet25 = () => this.tieBet(25);
+    public putPlayerPairBet25 = () => this.playerPairBet(25);
+    public putBankerPairBet25 = () => this.bankerPairBet(25);
+
+    public putPlayerBet100 = () => this.playerBet(100);
+    public putBankerBet100 = () => this.bankerBet(100);
+    public putTieBet100 = () => this.tieBet(100);
+    public putPlayerPairBet100 = () => this.playerPairBet(100);
+    public putBankerPairBet100 = () => this.bankerPairBet(100);
+
+    public putPlayerBet500 = () => this.playerBet(500);
+    public putBankerBet500 = () => this.bankerBet(500);
+    public putTieBet500 = () => this.tieBet(500);
+    public putPlayerPairBet500 = () => this.playerPairBet(500);
+    public putBankerPairBet500 = () => this.bankerPairBet(500);
+
     public onClearBets = () => this.clearBets();
 
-    public playerBet() {
-        console.log('You Bet: 100 on Player');
-        if(!playerStat.putBets(100,0,0,0,0)) {
+    public playerBet(betValue: number) {
+        console.log('You Bet: ' + betValue + ' on Player');
+        if (!playerStat.putBets(betValue, 0, 0, 0, 0)) {
             console.log('Insufficient Funds');
             window.confirm('Insufficient Funds!')
-        } else {}
-    }
-
-    public bankerBet() {
-        console.log('You Bet: 100 on Banker');
-        if(!playerStat.putBets(0,100,0,0,0)) {
-            console.log('Insufficient Funds');
-            window.confirm('Insufficient Funds!')
+        } else {
+            playerBet += betValue;
+            this.setState({ playerBetValue: playerBet });
         }
     }
 
-    public tieBet() {
-        console.log('You Bet: 100 on Tie');
-        if(!playerStat.putBets(0,0,100,0,0)) {
+    public bankerBet(betValue: number) {
+        console.log('You Bet: ' + betValue + ' on Player');
+        if (!playerStat.putBets(0, betValue, 0, 0, 0)) {
             console.log('Insufficient Funds');
             window.confirm('Insufficient Funds!')
+        } else {
+            bankerBet += betValue;
+            this.setState({ bankerBetValue: bankerBet });
         }
     }
 
-    public playerPairBet() {
-        console.log('You Bet: 100 on Player Pair');
-        if(!playerStat.putBets(0,0,0,100,0)) {
+    public tieBet(betValue: number) {
+        console.log('You Bet: ' + betValue + ' on Player');
+        if (!playerStat.putBets(0, 0, betValue, 0, 0)) {
             console.log('Insufficient Funds');
             window.confirm('Insufficient Funds!')
+        } else {
+            tieBet += betValue;
+            this.setState({ tieBetValue: tieBet });
         }
     }
 
-    public bankerPairBet() {
-        console.log('You Bet: 100 on Banker Pair');
-        if(!playerStat.putBets(0,0,0,0,100)) {
+    public playerPairBet(betValue: number) {
+        console.log('You Bet: ' + betValue + ' on Player');
+        if (!playerStat.putBets(0, 0, 0, betValue, 0)) {
             console.log('Insufficient Funds');
             window.confirm('Insufficient Funds!')
+        } else {
+            playerPairBet += betValue;
+            this.setState({ playerPairBetValue: playerPairBet });
+        }
+    }
+
+    public bankerPairBet(betValue: number) {
+        console.log('You Bet: ' + betValue + ' on Player');
+        if (!playerStat.putBets(0, 0, 0, 0, betValue)) {
+            console.log('Insufficient Funds');
+            window.confirm('Insufficient Funds!')
+        } else {
+            bankerPairBet += betValue;
+            this.setState({ bankerPairBetValue: bankerPairBet })
         }
     }
 
@@ -96,7 +151,14 @@ class Table extends React.Component<IProps, IState> {
         // theShoe = createShoe();
         theShoe = shuffle(new TheShoe().create());
         playerStat.resetPlayer();
-        this.setState({value: String(playerStat.chips)});
+        this.setState({ value: String(playerStat.chips) });
+    }
+
+    public restartGame() {
+        theShoe = shuffle(new TheShoe().create());
+        playerStat.resetPlayer();
+        this.setState({ value: String(playerStat.chips) });
+        clearCards();
     }
 
     public shuffleCurrentCards() {
@@ -104,13 +166,33 @@ class Table extends React.Component<IProps, IState> {
     }
 
     public dealCards() {
-        deal(theShoe);
-        this.setState({value: String(playerStat.chips)});
+        if (theShoe.length < 52) {
+            roundResult = 'Cards in the Shoe is not enought, restart to continue playing.';
+            this.setState({ roundResultValue: roundResult });
+        } else {
+            clearCards();
+            deal(theShoe);
+            this.setState({ value: String(playerStat.chips) });
+            this.setState({ roundResultValue: roundResult });
+        }
     }
 
     public clearBets() {
         console.log(playerStat);
+        clearCards();
         playerStat.clearBets();
+
+        playerBet = 0;
+        this.setState({ playerBetValue: 0 });
+        bankerBet = 0;
+        this.setState({ bankerBetValue: 0 });
+        tieBet = 0;
+        this.setState({ tieBetValue: 0 });
+        playerPairBet = 0;
+        this.setState({ playerPairBetValue: 0 });
+        bankerPairBet = 0;
+        this.setState({ bankerPairBetValue: 0 });
+
         console.log(playerStat);
     }
 
@@ -118,50 +200,122 @@ class Table extends React.Component<IProps, IState> {
         if (gameHistoryValue != undefined) {
             this.setState({
                 showPopup: !this.state.showPopup
-              });
+            });
         }
-    }
-
-    handleChange(event: any) {
-        this.setState({ value: event.target.value });
-    }
-
-    handleSubmit(event: any) {
-        event.preventDefault();
     }
 
     public render() {
         return (
             <div className="hello">
                 <div className="greeting">
+                    <button className="restart-game" onClick={this.onNewCards}>Restart Shoe</button>
+                    <label className="Spades">&spades;</label>
+                    <label className="Hearts">&hearts;</label>
                     Lets Play Baccarat!
-                </div>
-                <div className="available-funds">
-                <label>
-                    <label>Available Funds: </label>
-                    <input id="currentFunds" value={playerStat.chips} readOnly/>
-                </label>
-                </div>
-                <button onClick={this.onNewCards}>Restart Game</button>
-                <button onClick={this.onShuffleCards}>Shuffle Cards</button>
-                <button onClick={this.onClearBets}>Clear Bets</button>
-                <div>
-                    <button onClick={this.onDeal}>Deal!</button>
+                <label className="Clubs">&clubs;</label>
+                    <label className="Diamonds">&diams;</label>
                 </div>
                 <div>
-                    <button onClick={this.putPlayerBet}>Bet 100 on Player</button>
-                    <button onClick={this.putBankerBet}>Bet 100 on Banker</button>
-                    <button onClick={this.putTieBet}>Bet 100 on Tie</button>
-                    <button onClick={this.putPlayerPairBet}>Bet 100 on Player Pair</button>
-                    <button onClick={this.putBankerPairBet}>Bet 100 on Banker Pair</button>
+                    <input className="result" value={roundResult} readOnly /><br></br>
                 </div>
+                <div>
+                    <div className="card-table">
+                        {/* Player Side */}
+                        <label>Player</label>
+                        <div className="cards" id="playerThird">
+                            <span className="image"></span>
+                            <span className="suit"></span>
+                        </div>
+                        <div className="cards" id="playerSecond">
+                            <span className="image"></span>
+                            <span className="suit"></span>
+                        </div>
+                        <div className="cards" id="playerFirst">
+                            <span className="image"></span>
+                            <span className="suit"></span>
+                        </div>
+                        <div className="sep"></div>
+                        {/* Banker Side */}
+                        <div className="cards" id="bankerFirst">
+                            <span className="image"></span>
+                            <span className="suit"></span>
+                        </div>
+                        <div className="cards" id="bankerSecond">
+                            <span className="image"></span>
+                            <span className="suit"></span>
+                        </div>
+                        <div className="cards" id="bankerThird">
+                            <span className="image"></span>
+                            <span className="suit"></span>
+                        </div>
+                        <label>Banker</label>
+                    </div>
+                </div>
+                <div>
+                    <div className="horizontal-sep"></div>
+                    <label>
+                        <label>Available Funds: </label>
+                        <input id="currentFunds" value={playerStat.chips} readOnly />
+                    </label><br></br>
+                    <button className="clear-bets" onClick={this.onClearBets}>Clear Bets</button>
+                    <button className="deal" onClick={this.onDeal}>Deal!</button>
+                    <button className="shuffle" onClick={this.onShuffleCards}>Shuffle Cards</button>
+                </div>
+
+                <div>
+                    <div className="bets">
+                        <label>Player Pair Bet:</label>
+                        <input value={playerPairBet} readOnly /><br></br>
+                        <button className="chip" onClick={this.putPlayerPairBet5}>5</button>
+                        <button className="chip" onClick={this.putPlayerPairBet25}>25</button>
+                        <button className="chip" onClick={this.putPlayerPairBet100}>100</button>
+                        <button className="chip" onClick={this.putPlayerPairBet500}>500</button>
+                    </div>
+                    <div className="sep"></div>
+                    <div className="bets">
+                        <label>Player Bet:</label>
+                        <input value={playerBet} readOnly /><br></br>
+                        <button className="chip" onClick={this.putPlayerBet5}>5</button>
+                        <button className="chip" onClick={this.putPlayerBet25}>25</button>
+                        <button className="chip" onClick={this.putPlayerBet100}>100</button>
+                        <button className="chip" onClick={this.putPlayerBet500}>500</button>
+                    </div>
+                    <div className="sep"></div>
+                    <div className="bets">
+                        <label>Tie Bet:</label>
+                        <input value={tieBet} readOnly /><br></br>
+                        <button className="chip" onClick={this.putTieBet5}>5</button>
+                        <button className="chip" onClick={this.putTieBet25}>25</button>
+                        <button className="chip" onClick={this.putTieBet100}>100</button>
+                        <button className="chip" onClick={this.putTieBet500}>500</button>
+                    </div>
+                    <div className="sep"></div>
+                    <div className="bets">
+                        <label>Banker Bet:</label>
+                        <input value={bankerBet} readOnly /><br></br>
+                        <button className="chip" onClick={this.putBankerBet5}>5</button>
+                        <button className="chip" onClick={this.putBankerBet25}>25</button>
+                        <button className="chip" onClick={this.putBankerBet100}>100</button>
+                        <button className="chip" onClick={this.putBankerBet500}>500</button>
+                    </div>
+                    <div className="sep"></div>
+                    <div className="bets">
+                        <label>Banker Pair Bet:</label>
+                        <input value={bankerPairBet} readOnly /><br></br>
+                        <button className="chip" onClick={this.putBankerPairBet5}>5</button>
+                        <button className="chip" onClick={this.putBankerPairBet25}>25</button>
+                        <button className="chip" onClick={this.putBankerPairBet100}>100</button>
+                        <button className="chip" onClick={this.putBankerPairBet500}>500</button>
+                    </div>
+                </div>
+                <div className="horizontal-sep"></div>
                 <button onClick={this.showGameHistory}>Game History</button>
-                {this.state.showPopup ? 
-                <GameHistoryPopup
-                    gameHistory={gameHistoryValue}
-                    closePopup={this.gameHistory.bind(this)}
-                />
-                : null
+                {this.state.showPopup ?
+                    <GameHistoryPopup
+                        gameHistory={gameHistoryValue}
+                        closePopup={this.gameHistory.bind(this)}
+                    />
+                    : null
                 }
             </div>
         );
@@ -181,7 +335,6 @@ function shuffle(theShoe: Card[]) {
         theShoe[location1] = theShoe[location2];
         theShoe[location2] = temp;
     }
-
     return theShoe;
 }
 
@@ -214,9 +367,55 @@ function deal(theShoe: Card[]) {
     totalTheHands(playerHand, bankerHand);
 }
 
+function clearCards() {
+    document.querySelector("#playerFirst .suit")!.innerHTML = "";
+    document.querySelector("#playerFirst .image")!.innerHTML = "";
+    document.querySelector("#playerSecond .suit")!.innerHTML = "";
+    document.querySelector("#playerSecond .image")!.innerHTML = "";
+    document.querySelector("#playerThird .suit")!.innerHTML = "";
+    document.querySelector("#playerThird .image")!.innerHTML = "";
+    document.querySelector("#bankerFirst .suit")!.innerHTML = "";
+    document.querySelector("#bankerFirst .image")!.innerHTML = "";
+    document.querySelector("#bankerSecond .suit")!.innerHTML = "";
+    document.querySelector("#bankerSecond .image")!.innerHTML = "";
+    document.querySelector("#bankerThird .suit")!.innerHTML = "";
+    document.querySelector("#bankerThird .image")!.innerHTML = "";
+    document.querySelector("#playerFirst")!
+        .classList.remove("Diamonds", "Hearts", "Spades", "Clubs");
+    document.querySelector("#playerSecond")!
+        .classList.remove("Diamonds", "Hearts", "Spades", "Clubs");
+    document.querySelector("#bankerFirst")!
+        .classList.remove("Diamonds", "Hearts", "Spades", "Clubs");
+    document.querySelector("#bankerSecond")!
+        .classList.remove("Diamonds", "Hearts", "Spades", "Clubs");
+    document.querySelector("#playerThird")!
+        .classList.remove("Diamonds", "Hearts", "Spades", "Clubs");
+    document.querySelector("#bankerThird")!
+        .classList.remove("Diamonds", "Hearts", "Spades", "Clubs");
+    playerBet = 0;
+    bankerBet = 0;
+    tieBet = 0;
+    playerPairBet = 0;
+    bankerPairBet = 0;
+}
+
 function totalTheHands(playerHand: Card[], bankerHand: Card[]) {
     playerHandTotalValue = (playerHand[0].value + playerHand[1].value) % 10;
     bankerHandTotalValue = (bankerHand[0].value + bankerHand[1].value) % 10;
+
+    document.querySelector("#playerFirst .suit")!.innerHTML = playerHand[0].getCardSuit();
+    document.querySelector("#playerFirst .image")!.innerHTML = playerHand[0].image;
+    document.querySelector("#playerFirst")!.classList.add(playerHand[0].suits);
+    document.querySelector("#playerSecond .suit")!.innerHTML = playerHand[1].getCardSuit();
+    document.querySelector("#playerSecond .image")!.innerHTML = playerHand[1].image;
+    document.querySelector("#playerSecond")!.classList.add(playerHand[1].suits);
+    document.querySelector("#bankerFirst .suit")!.innerHTML = bankerHand[0].getCardSuit();
+    document.querySelector("#bankerFirst .image")!.innerHTML = bankerHand[0].image;
+    document.querySelector("#bankerFirst")!.classList.add(bankerHand[0].suits);
+    document.querySelector("#bankerSecond .suit")!.innerHTML = bankerHand[1].getCardSuit();
+    document.querySelector("#bankerSecond .image")!.innerHTML = bankerHand[1].image;
+    document.querySelector("#bankerSecond")!.classList.add(bankerHand[1].suits);
+
     if (playerHandTotalValue === 8 ||
         playerHandTotalValue === 9 ||
         bankerHandTotalValue === 8 ||
@@ -281,6 +480,18 @@ function drawThirdCards(playerHand: Card[], bankerHand: Card[]) {
     console.log('Player Hand Tableau: ' + playerHandTotalValue);
     console.log('Banker Hand Tableau: ' + bankerHandTotalValue);
     //End Debug
+
+    if (playerHand.length == 3) {
+        document.querySelector("#playerThird .suit")!.innerHTML = playerHand[2].getCardSuit();
+        document.querySelector("#playerThird .image")!.innerHTML = playerHand[2].image;
+        document.querySelector("#playerThird")!.classList.add(playerHand[2].suits);
+    }
+
+    if (bankerHand.length == 3) {
+        document.querySelector("#bankerThird .suit")!.innerHTML = bankerHand[2].getCardSuit();
+        document.querySelector("#bankerThird .image")!.innerHTML = bankerHand[2].image;
+        document.querySelector("#bankerThird")!.classList.add(bankerHand[2].suits);
+    }
 }
 
 function gameResult(playerHand: Card[], bankerHand: Card[]) {
@@ -288,20 +499,29 @@ function gameResult(playerHand: Card[], bankerHand: Card[]) {
     roundName += 1;
     if (playerHandTotalValue > bankerHandTotalValue) {
         console.log("Player Wins!");
-        endRound = new Round(""+roundName, true, false, false, false, false);
+        roundResult = "Player Wins!";
+        endRound = new Round("" + roundName, true, false, false, false, false);
     } else if (playerHandTotalValue < bankerHandTotalValue) {
         console.log("Banker Wins!");
-        endRound = new Round(""+roundName, false, true, false, false, false);
+        roundResult = "Banker Wins!";
+        endRound = new Round("" + roundName, false, true, false, false, false);
     } else if (playerHandTotalValue === bankerHandTotalValue) {
         console.log("It is a TIE. The bank and player both have", bankerHandTotalValue);
-        endRound = new Round(""+roundName, false, false, true, false, false);
+        roundResult = "It is a TIE!";
+        endRound = new Round("" + roundName, false, false, true, false, false);
     }
 
     if (playerHand[0].value == playerHand[1].value) {
+        roundResult = roundResult + " Player hand got a Pair!";
         endRound!.updatePlayerPair();
     }
 
     if (bankerHand[0].value == bankerHand[1].value) {
+        if (playerHand[0].value == playerHand[1].value) {
+            roundResult = roundResult + " Player and Banker hand got a Pair!";
+        } else {
+            roundResult = roundResult + " Banker hand got a Pair!";
+        }
         endRound!.updateBankerPair();
     }
 

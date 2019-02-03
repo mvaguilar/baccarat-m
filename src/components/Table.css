@@ -1,0 +1,136 @@
+.hello {
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: antiquewhite;
+  }
+  
+  .greeting {
+    font-size: 48px; 
+  }
+
+  .result{
+    width: 50%;
+    text-align: center;
+  }
+
+  .available-funds{
+    font-size: initial;
+    padding: 2%;
+    color: antiquewhite;
+  }
+
+  .popup{
+    font-size: initial;
+  }
+
+  .game-table{
+    border: 1px solid black;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .game-table ,th{
+    border: 1px solid black;
+  }
+  .game-table ,td{
+    border: 1px solid black;
+  }
+
+  .game-history-list {
+    list-style-type: none;
+  }
+
+  .bets{
+    display: inline-block;
+  }
+
+  .chip{
+    border-radius: 50%;
+    margin: 5px;
+    height: 40px;
+    width: 40px;
+  }
+
+  .deal{
+    border-radius: 50%;
+    margin: 5px;
+    height: 60px;
+    width: 60px;
+    font-size: large;
+  }
+
+  .clear-bets{
+    border-radius: 50%;
+    margin: 5px;
+    height: 40px;
+    width: 40px;
+    font-size: xx-small;
+  }
+
+  .shuffle{
+    border-radius: 50%;
+    margin: 5px;
+    height: 50px;
+    width: 50px;
+    font-size: x-small;
+  }
+
+  .restart-game {
+    border-radius: 50%;
+    margin: 5px;
+    height: 85px;
+    width: 85px;
+    font-size: large;
+  }
+
+  .sep {
+    border-left: 5px solid antiquewhite;
+    height: 100px;
+    margin: 5px;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+  }
+  
+  .horizontal-sep {
+    border: 2px solid antiquewhite;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+  }
+
+  .card-table {
+    height: 158px;
+  }
+
+  .cards {
+    display: inline-block;
+    text-align: center;
+    padding: 18px 15px 0 15px;
+    width: 40px;
+    height: 70px;
+    font-size: 20px;
+    background-color: white;
+    border: solid 1px black;
+  }
+
+  .suit {
+    border: none;
+  }
+
+  .Spades {
+    color: black;
+  }
+  
+  .Clubs {
+    color: black;
+  }
+  
+  .Hearts {
+    color: red;
+  }
+  
+  .Diamonds {
+    color: red;
+  }
