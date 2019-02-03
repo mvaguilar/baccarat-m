@@ -4,6 +4,7 @@ import TheShoe from "./TheShoe";
 import './Hello.css';
 import Round from './Round';
 import GameHistory from './GameHistory';
+import GameHistoryPopup from './GameHistoryPopup';
 import Player from './Player';
 
 export interface IProps {
@@ -13,19 +14,22 @@ export interface IProps {
 
 interface IState {
     value:string;
+    showPopup: boolean;
 }
 
 var theShoe: Card[] = [];
-var gameHistory: GameHistory;
+var gameHistoryValue: GameHistory;
 var playerStat: Player;
-
+var roundName: number;
+  
 class Table extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
-        gameHistory = new GameHistory();
+        roundName = 0;
+        gameHistoryValue = new GameHistory();
         playerStat = new Player();
         this.createTheShoe();
-        this.state = { value: '5' };
+        this.state = { value: '0', showPopup: false };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -53,7 +57,7 @@ class Table extends React.Component<IProps, IState> {
         if(!playerStat.putBets(100,0,0,0,0)) {
             console.log('Insufficient Funds');
             window.confirm('Insufficient Funds!')
-        }
+        } else {}
     }
 
     public bankerBet() {
@@ -111,8 +115,11 @@ class Table extends React.Component<IProps, IState> {
     }
 
     public gameHistory() {
-        if (gameHistory != undefined)
-            console.log(gameHistory);
+        if (gameHistoryValue != undefined) {
+            this.setState({
+                showPopup: !this.state.showPopup
+              });
+        }
     }
 
     handleChange(event: any) {
@@ -129,13 +136,18 @@ class Table extends React.Component<IProps, IState> {
                 <div className="greeting">
                     Lets Play Baccarat!
                 </div>
+                <div className="available-funds">
                 <label>
+                    <label>Available Funds: </label>
                     <input id="currentFunds" value={playerStat.chips} readOnly/>
                 </label>
+                </div>
                 <button onClick={this.onNewCards}>Restart Game</button>
                 <button onClick={this.onShuffleCards}>Shuffle Cards</button>
-                <button onClick={this.onDeal}>Deal!</button>
                 <button onClick={this.onClearBets}>Clear Bets</button>
+                <div>
+                    <button onClick={this.onDeal}>Deal!</button>
+                </div>
                 <div>
                     <button onClick={this.putPlayerBet}>Bet 100 on Player</button>
                     <button onClick={this.putBankerBet}>Bet 100 on Banker</button>
@@ -144,6 +156,13 @@ class Table extends React.Component<IProps, IState> {
                     <button onClick={this.putBankerPairBet}>Bet 100 on Banker Pair</button>
                 </div>
                 <button onClick={this.showGameHistory}>Game History</button>
+                {this.state.showPopup ? 
+                <GameHistoryPopup
+                    gameHistory={gameHistoryValue}
+                    closePopup={this.gameHistory.bind(this)}
+                />
+                : null
+                }
             </div>
         );
     }
@@ -266,26 +285,28 @@ function drawThirdCards(playerHand: Card[], bankerHand: Card[]) {
 
 function gameResult(playerHand: Card[], bankerHand: Card[]) {
     var endRound: Round;
+    roundName += 1;
     if (playerHandTotalValue > bankerHandTotalValue) {
         console.log("Player Wins!");
-        endRound = new Round(true, false, false, false, false);
+        endRound = new Round(""+roundName, true, false, false, false, false);
     } else if (playerHandTotalValue < bankerHandTotalValue) {
         console.log("Banker Wins!");
-        endRound = new Round(false, true, false, false, false);
+        endRound = new Round(""+roundName, false, true, false, false, false);
     } else if (playerHandTotalValue === bankerHandTotalValue) {
         console.log("It is a TIE. The bank and player both have", bankerHandTotalValue);
-        endRound = new Round(false, false, true, false, false);
+        endRound = new Round(""+roundName, false, false, true, false, false);
     }
 
     if (playerHand[0].value == playerHand[1].value) {
         endRound!.updatePlayerPair();
     }
 
-    if (playerHand[0].value == playerHand[1].value) {
+    if (bankerHand[0].value == bankerHand[1].value) {
         endRound!.updateBankerPair();
     }
 
+    console.log(endRound!);
     playerStat.updateChips(endRound!);
-    gameHistory.addToRecord(endRound!);
+    gameHistoryValue.addToRecord(endRound!);
     // bonusHands();
 }
