@@ -23,7 +23,8 @@ In the project directory, you can run:
 
 ### `npm i`
 
-Install the modules used by the App, must install [Node.js](https://nodejs.org/en/)<br>
+Install the modules used by the App,<br>
+must install [Node.js](https://nodejs.org/en/)
 
 ### `npm start`
 
