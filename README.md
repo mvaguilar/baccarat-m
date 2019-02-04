@@ -10,6 +10,7 @@ You can find the guide [here](https://github.com/facebookincubator/create-react-
 ## Table of Contents
 
 - [Available Scripts](#available-scripts)
+  - [npm i](#npm-install)
   - [npm start](#npm-start)
   - [npm test](#npm-test)
   - [npm run build](#npm-run-build)
@@ -19,6 +20,10 @@ You can find the guide [here](https://github.com/facebookincubator/create-react-
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm i`
+
+Install the modules used by the App, must install [Node.js](https://nodejs.org/en/)<br>
 
 ### `npm start`
 
