@@ -33,6 +33,7 @@ var playerPairBet: number;
 var bankerPairBet: number;
 var roundResult: string;
 
+//Table Class - Main Class for rendering and building the Game
 class Table extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
@@ -59,13 +60,19 @@ class Table extends React.Component<IProps, IState> {
         };
     }
 
-
+    //Restart the Table/Generate New cards for the game
     public onNewCards = () => this.restartGame();
+
+    //Shuffle current Cards in the Shoe
     public onShuffleCards = () => this.shuffleCurrentCards();
+
+    //Deal the round, calculate result
     public onDeal = () => this.dealCards();
+
+    //show record of past rounds and the results
     public showGameHistory = () => this.gameHistory();
 
-    // Coins and Bets
+    // Coins and Bets (5,25,100,500 denomination)
     public putPlayerBet5 = () => this.playerBet(5);
     public putBankerBet5 = () => this.bankerBet(5);
     public putTieBet5 = () => this.tieBet(5);
@@ -89,9 +96,12 @@ class Table extends React.Component<IProps, IState> {
     public putTieBet500 = () => this.tieBet(500);
     public putPlayerPairBet500 = () => this.playerPairBet(500);
     public putBankerPairBet500 = () => this.bankerPairBet(500);
+    //End of Coins and Bets
 
+    //Clear bets
     public onClearBets = () => this.clearBets();
 
+    //Possible Bets (Player, Bank, Tie, Pairs)
     public playerBet(betValue: number) {
         console.log('You Bet: ' + betValue + ' on Player');
         if (!playerStat.putBets(betValue, 0, 0, 0, 0)) {
@@ -146,9 +156,9 @@ class Table extends React.Component<IProps, IState> {
             this.setState({ bankerPairBetValue: bankerPairBet })
         }
     }
+    //End Possible Bets (Player, Bank, Tie, Pairs)
 
     public createTheShoe() {
-        // theShoe = createShoe();
         theShoe = shuffle(new TheShoe().create());
         playerStat.resetPlayer();
         this.setState({ value: String(playerStat.chips) });

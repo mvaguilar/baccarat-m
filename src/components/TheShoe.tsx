@@ -1,5 +1,6 @@
 import Card from "./Card";
 
+//the Shoe has 8 decks, cards will be discarded every successful deals
 export class TheShoe{
 
     newShoe:Card[] = [];
