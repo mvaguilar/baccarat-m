@@ -73,6 +73,7 @@ export class Player {
             this.chips += this.bankerBet * 1.95
         }
         if (currentRound.tie) {
+            this.chips += this.totalBetThisRound;
             this.chips += this.tieBet * 8
         }
         if (currentRound.playerPair) {
