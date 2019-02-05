@@ -67,19 +67,27 @@ export class Player {
     updateChips(currentRound:Round) {
         this.chips -= this.totalBetThisRound;
         if (currentRound.playerWin) {
+            //Player Wins, double the bet for the win
             this.chips += this.playerBet * 2
         }
         if (currentRound.bankerWin) {
+            //Banker Wins, the bet and 95% of it for the win 
             this.chips += this.bankerBet * 1.95
         }
         if (currentRound.tie) {
-            this.chips += this.totalBetThisRound;
+            //Tie, 8 to 1 for the win, then return the bets
             this.chips += this.tieBet * 8
+            this.chips += this.totalBetThisRound;
+            this.chips -= this.playerPairBet
+            this.chips -= this.bankerPairBet
+            this.chips -= this.tieBet
         }
         if (currentRound.playerPair) {
+            //Player pair is 11 to 1 for the win
             this.chips += this.playerPairBet * 11
         }
         if (currentRound.bankerPair) {
+            //Banker pair is 11 to 1 for the win
             this.chips += this.bankerPairBet * 11
         }
         console.log("Funds: "+this.chips);
